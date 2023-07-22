@@ -7,7 +7,6 @@ function NavBar({ isLoggedIn, setIsLoggedIn, username, setUsername }) {
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        {/* Navbar content */}
         <a
           className="navbar-brand"
           href="#"

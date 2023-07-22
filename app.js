@@ -63,20 +63,31 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/update-balance", async (req, res) => {
-  const { username, balance } = req.body;
+  const { email, deposit } = req.body;
   const client = new MongoClient(url, { useUnifiedTopology: true });
 
   try {
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection("users");
+
+    console.log("Email:", email);
+    const user = await collection.findOne({ email: email });
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const updatedBalance = user.balance + deposit;
     const result = await collection.updateOne(
-      { email: username },
-      { $set: { balance: balance } }
+      { email: email },
+      { $set: { balance: updatedBalance } }
     );
 
     if (result.modifiedCount === 1) {
-      res.status(200).send({ message: "Balance updated successfully." });
+      res.status(200).send({
+        message: "Balance updated successfully.",
+        balance: updatedBalance,
+      });
     } else {
       throw new Error("User not found or balance not updated.");
     }

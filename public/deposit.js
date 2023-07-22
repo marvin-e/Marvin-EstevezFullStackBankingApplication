@@ -1,31 +1,21 @@
 function Deposit({ onDeposit, balance, username }) {
   const [amount, setAmount] = React.useState("");
-  const [errorMessage, setErrorMessage] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
 
   const handleDeposit = async (event) => {
     event.preventDefault();
-    if (amount < 0) {
-      setErrorMessage("Deposit has to be positive number");
-      setSuccessMessage("");
-      setAmount("");
-      return;
-    }
-    if (isNaN(amount) || amount === "") {
-      setErrorMessage("Value must be a number");
-      setSuccessMessage("");
-      setAmount("");
-      return;
-    }
-    setErrorMessage("");
-    onDeposit(amount);
+    const updatedBalance = balance + Number(amount);
+    onDeposit(updatedBalance);
     setSuccessMessage("Your deposit has been successfully processed");
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 2000);
 
     try {
       const response = await fetch("/update-balance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, balance: balance + Number(amount) }), // Update balance here
+        body: JSON.stringify({ username: username, deposit: Number(amount) }), // Send updated balance here
       });
 
       if (!response.ok) {
@@ -54,14 +44,12 @@ function Deposit({ onDeposit, balance, username }) {
       header="Deposit"
       body={
         <form onSubmit={handleDeposit}>
-          <label htmlFor="amount">Deposit amount: {balance}</label>
+          <label htmlFor="amount">Deposit amount: {amount}</label>
           {successMessage && <p>{successMessage}</p>}
-          {errorMessage && <p>{errorMessage}</p>}
           <input
             type="text"
             id="amount"
             placeholder="Deposit Amount"
-            pattern="-?\d*\.?\d{0,2}|[-+]?[a-zA-Z]+"
             value={amount}
             onChange={handleChange}
           />

@@ -53,7 +53,7 @@ function Spa() {
                 component={Deposit}
                 onDeposit={handleDeposit}
                 balance={balance}
-                email={username}
+                username={username}
               />
             )}
           />
