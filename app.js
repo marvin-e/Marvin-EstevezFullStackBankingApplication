@@ -3,17 +3,14 @@ const app = express();
 const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const url =
+  "mongodb+srv://marvsFirstDB:QIFzLVg3JCWGcckR@cluster0.pkeuq1h.mongodb.net/";
+const dbName = "sample";
 
 app.use(cors());
 app.use(bodyParser.json());
-
-/*****MongoDB connection string *******/
-const dbName = "sample"; // use your MongoDB database name
-
-// Serve static files from the 'public' directory
 app.use(express.static("public"));
 
-// Create account route
 app.post("/create-account", async (req, res) => {
   const { name, email, password } = req.body;
   const client = new MongoClient(url);
@@ -38,21 +35,15 @@ app.post("/create-account", async (req, res) => {
   }
 });
 
-// Login route
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
-  // Connect to the MongoDB server
   const client = new MongoClient(url);
 
   try {
     await client.connect();
 
-    // Access the database and collection
     const db = client.db(dbName);
     const collection = db.collection("users");
-
-    // Find the user with the given email and password
     const user = await collection.findOne({ email, password });
 
     if (user) {
@@ -67,40 +58,31 @@ app.post("/login", async (req, res) => {
     console.error("Error occurred while logging in:", error);
     res.status(500).json({ message: "An error occurred while logging in" });
   } finally {
-    // Close the MongoDB connection
     await client.close();
   }
 });
 
 app.post("/update-balance", async (req, res) => {
-  const { email, balance } = req.body;
-  const client = new MongoClient(url);
+  const { username, balance } = req.body;
+  const client = new MongoClient(url, { useUnifiedTopology: true });
 
   try {
     await client.connect();
     const db = client.db(dbName);
+    const collection = db.collection("users");
+    const result = await collection.updateOne(
+      { email: username },
+      { $set: { balance: balance } }
+    );
 
-    // Update the user's balance
-    const result = await db
-      .collection("users")
-      .findOneAndUpdate(
-        { email: email },
-        { $inc: { balance: balance } },
-        { returnOriginal: false }
-      );
-
-    if (result.value) {
-      res.status(200).json({ message: "Balance updated successfully" });
+    if (result.modifiedCount === 1) {
+      res.status(200).send({ message: "Balance updated successfully." });
     } else {
-      res
-        .status(400)
-        .json({ message: "User not found or balance not changed" });
+      throw new Error("User not found or balance not updated.");
     }
   } catch (error) {
-    console.error("Error occurred while updating balance:", error);
-    res
-      .status(500)
-      .json({ message: "An error occurred while updating balance" });
+    console.error("Error updating balance:", error);
+    res.status(500).send({ message: "Internal Server Error" });
   } finally {
     await client.close();
   }
@@ -121,7 +103,6 @@ app.get("/fetch-users", async (req, res) => {
   }
 });
 
-// Start the server
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

@@ -3,7 +3,7 @@ function Spa() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const amount = "";
+  // const amount = "";
 
   const handleDeposit = (amount) => {
     setBalance((prevBalance) => prevBalance + parseFloat(amount));
@@ -53,7 +53,7 @@ function Spa() {
                 component={Deposit}
                 onDeposit={handleDeposit}
                 balance={balance}
-                email={email}
+                email={username}
               />
             )}
           />
@@ -71,12 +71,7 @@ function Spa() {
           <Route
             path="/balance/"
             render={(props) => (
-              <Balance
-                {...props}
-                balance={balance}
-                email={email}
-                amount={amount}
-              />
+              <Balance {...props} balance={balance} email={username} />
             )}
           />
           <Route path="/alldata/" component={AllData} />

@@ -33,7 +33,7 @@ function Withdraw({ onWithdraw, balance }) {
 
   const handleChange = (event) => {
     const value = event.target.value;
-    const regex = /^-?\d*\.?\d{0,2}$|^[-+]?[a-zA-Z]+$/;
+    const regex = /^\d*\.?\d{0,2}$/;
     if (value === "" || regex.test(value)) {
       setAmount(value);
     }
