@@ -4,7 +4,7 @@ const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const url =
-  "mongodb+srv://marvsFirstDB:QIFzLVg3JCWGcckR@cluster0.pkeuq1h.mongodb.net/";
+ /*** Mongodb connection url ****/
 const dbName = "sample";
 
 app.use(cors());
