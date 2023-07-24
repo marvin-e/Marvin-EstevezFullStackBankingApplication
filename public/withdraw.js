@@ -5,7 +5,6 @@ function Withdraw({ onWithdraw, balance }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // const amountNum = Number(amount);
     if (isNaN(amount) || amount === "") {
       setErrorMessage("Value must be a number");
       setSuccessMessage("");
@@ -33,7 +32,7 @@ function Withdraw({ onWithdraw, balance }) {
 
   const handleChange = (event) => {
     const value = event.target.value;
-    const regex = /^\d*\.?\d{0,2}$/;
+    const regex = /^-?\d*\.?\d{0,2}$|^[-+]?[a-zA-Z]+$/;
     if (value === "" || regex.test(value)) {
       setAmount(value);
     }

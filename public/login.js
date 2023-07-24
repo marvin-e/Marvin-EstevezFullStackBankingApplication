@@ -17,7 +17,7 @@ function Login({ setIsLoggedIn, setUsername, setBalance }) {
         if (data.message === "Login successful") {
           setIsLoggedIn(true);
           setUsername(email);
-          setBalance(data.balance);
+          setBalance(data.balance); // Set balance here
           setStatus("Great you have an account with us!");
         } else {
           setStatus("Invalid Email or Password");

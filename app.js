@@ -4,8 +4,9 @@ const MongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const url =
- /*** Mongodb connection url ****/
+  "mongodb+srv://marvsFirstDB:QIFzLVg3JCWGcckR@cluster0.pkeuq1h.mongodb.net/";
 const dbName = "sample";
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -57,44 +58,6 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     console.error("Error occurred while logging in:", error);
     res.status(500).json({ message: "An error occurred while logging in" });
-  } finally {
-    await client.close();
-  }
-});
-
-app.post("/update-balance", async (req, res) => {
-  const { username, deposit } = req.body;
-  let email = username;
-  const client = new MongoClient(url, { useUnifiedTopology: true });
-
-  try {
-    await client.connect();
-    const db = client.db(dbName);
-    const collection = db.collection("users");
-
-    console.log("Email:", email);
-    const user = await collection.findOne({ email: email });
-    if (!user) {
-      throw new Error("User not found.");
-    }
-
-    const updatedBalance = user.balance + deposit;
-    const result = await collection.updateOne(
-      { email: email },
-      { $set: { balance: updatedBalance } }
-    );
-
-    if (result.modifiedCount === 1) {
-      res.status(200).send({
-        message: "Balance updated successfully.",
-        balance: updatedBalance,
-      });
-    } else {
-      throw new Error("User not found or balance not updated.");
-    }
-  } catch (error) {
-    console.error("Error updating balance:", error);
-    res.status(500).send({ message: "Internal Server Error" });
   } finally {
     await client.close();
   }

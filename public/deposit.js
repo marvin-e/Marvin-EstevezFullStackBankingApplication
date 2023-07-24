@@ -1,38 +1,31 @@
 function Deposit({ onDeposit, balance, username }) {
   const [amount, setAmount] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [successMessage, setSuccessMessage] = React.useState("");
 
-  const handleDeposit = async (event) => {
+  const handleDeposit = (event) => {
     event.preventDefault();
-    const updatedBalance = balance + Number(amount);
-    onDeposit(updatedBalance);
-    setSuccessMessage("Your deposit has been successfully processed");
-    setTimeout(() => {
+    if (amount < 0) {
+      setErrorMessage("Deposit has to be positive number");
       setSuccessMessage("");
-    }, 2000);
-
-    try {
-      const response = await fetch("http://localhost:3000/update-balance", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username, deposit: Number(amount) }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-    } catch (error) {
-      console.error("Updating balance failed:", error);
+      setAmount("");
+      return;
     }
-
+    if (isNaN(amount) || amount === "") {
+      setErrorMessage("Value must be a number");
+      setSuccessMessage("");
+      setAmount("");
+      return;
+    }
+    setErrorMessage("");
+    onDeposit(amount);
+    setSuccessMessage("Your deposit has been successfully processed");
     setAmount("");
   };
 
   const handleChange = (event) => {
     const value = event.target.value;
-    const regex = /^\d*\.?\d{0,2}$/;
+    const regex = /^-?\d*\.?\d{0,2}$|^[-+]?[a-zA-Z]+$/;
     if (value === "" || regex.test(value)) {
       setAmount(value);
     }
@@ -44,12 +37,13 @@ function Deposit({ onDeposit, balance, username }) {
       header="Deposit"
       body={
         <form onSubmit={handleDeposit}>
-          <label htmlFor="amount">Deposit amount: {amount}</label>
+          <label htmlFor="amount">Deposit amount: {balance}</label>
           {successMessage && <p>{successMessage}</p>}
+          {errorMessage && <p>{errorMessage}</p>}
           <input
             type="text"
-            id="amount"
             placeholder="Deposit Amount"
+            pattern="-?\d*\.?\d{0,2}|[-+]?[a-zA-Z]+"
             value={amount}
             onChange={handleChange}
           />
