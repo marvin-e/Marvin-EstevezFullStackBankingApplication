@@ -63,7 +63,8 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/update-balance", async (req, res) => {
-  const { email, deposit } = req.body;
+  const { username, deposit } = req.body;
+  let email = username;
   const client = new MongoClient(url, { useUnifiedTopology: true });
 
   try {
