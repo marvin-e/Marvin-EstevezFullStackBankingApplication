@@ -15,7 +15,7 @@ function Deposit({ onDeposit, balance, username }) {
       const response = await fetch("/update-balance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username, deposit: Number(amount) }), // Send updated balance here
+        body: JSON.stringify({ username: username, deposit: Number(amount) }),
       });
 
       if (!response.ok) {
