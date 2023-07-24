@@ -12,7 +12,7 @@ function Deposit({ onDeposit, balance, username }) {
     }, 2000);
 
     try {
-      const response = await fetch("/update-balance", {
+      const response = await fetch("http://localhost:3000/update-balance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: username, deposit: Number(amount) }),
